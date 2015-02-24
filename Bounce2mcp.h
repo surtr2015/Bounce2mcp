@@ -24,6 +24,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
   Main code by Thomas O Fredericks (tof@t-o-f.info)
   Previous contributions by Eric Lowry, Jim Schimpf and Tom Harkaway
+  Modifications to add MCP23017 compatability made by Tenkai Kariya
   * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifdef BOUNCE_LOCK
