@@ -10,14 +10,20 @@ Open the Serial Monitor (57600 baud) for debug messages.
 
 // Include the Bounce2 library found here :
 // https://github.com/thomasfredericks/Bounce-Arduino-Wiring
-#include <Bounce2.h>
+
+#include <Wire.h>
+#include <Bounce2mcp.h>
+#include <Adafruit_MCP23017.h>
 
 
 #define BUTTON_PIN 2
 #define LED_PIN 13
 
 // Instantiate a Bounce object
-Bounce debouncer = Bounce(); 
+BounceMcp debouncer = BounceMcp(); 
+
+// Instantiate an MCP object
+Adafruit_MCP23017 mcp0;
 
 int buttonState;
 unsigned long buttonPressTimeStamp;
@@ -28,15 +34,16 @@ void setup() {
   
   Serial.begin(57600);
   
-  // Setup the button
-  pinMode(BUTTON_PIN,INPUT);
-  // Activate internal pull-up
-  digitalWrite(BUTTON_PIN,HIGH);
-  
-  // After setting up the button, setup debouncer
-  debouncer.attach(BUTTON_PIN);
-  debouncer.interval(5);
-  
+  // Begin the MCP object
+  mcp0.begin(0);
+
+  // Setup the button with an internal pull-up :
+  mcp0.pinMode(BUTTON_PIN, INPUT);
+  mcp0.pullUp(BUTTON_PIN, HIGH); 
+
+  // After setting up the button, setup the Bounce instance :
+  debouncer.attach(mcp0, BUTTON_PIN, 5);
+
   //Setup the LED
   pinMode(LED_PIN,OUTPUT);
   digitalWrite(LED_PIN,ledState);

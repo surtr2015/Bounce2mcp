@@ -3,27 +3,33 @@
 
 // Include the Bounce2 library found here :
 // https://github.com/thomasfredericks/Bounce-Arduino-Wiring
-#include <Bounce2.h>
-
+#include <Wire.h>
+#include <Bounce2mcp.h>
+#include <Adafruit_MCP23017.h>
 
 #define BUTTON_PIN 2
 #define LED_PIN 13
 
 int ledState = LOW;
 
+// Instantiate a Bounce object
+BounceMcp debouncer = BounceMcp(); 
 
-// Instantiate a Bounce object :
-Bounce debouncer = Bounce(); 
+// Instantiate an MCP object
+Adafruit_MCP23017 mcp0;
 
 void setup() {
   
+  // Begin the MCP object
+  mcp0.begin(0);
+
   // Setup the button with an internal pull-up :
-  pinMode(BUTTON_PIN,INPUT_PULLUP);
-  
+  mcp0.pinMode(BUTTON_PIN, INPUT);
+  mcp0.pullUp(BUTTON_PIN, HIGH); 
+
   // After setting up the button, setup the Bounce instance :
-  debouncer.attach(BUTTON_PIN);
-  debouncer.interval(500);
-  
+  debouncer.attach(mcp0, BUTTON_PIN, 5);
+    
   // Setup the LED :
   pinMode(LED_PIN,OUTPUT);
   digitalWrite(LED_PIN,ledState);
