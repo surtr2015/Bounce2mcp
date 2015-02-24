@@ -34,19 +34,20 @@
 //#define BOUNCE_LOCK_OUT
 
 
-#ifndef Bounce2_h
-#define Bounce2_h
+#ifndef Bounce2mcp_h
+#define Bounce2mcp_h
 
 #include <inttypes.h>
+#include <Adafruit_MCP23017.h>
 
-class Bounce
+class BounceMcp
 {
  public:
     // Create an instance of the bounce library
-    Bounce();
+    BounceMcp();
 
-    // Attach to a pin (and also sets initial state)
-    void attach(int pin);
+    // Attach to a MCP object, a pin (and also sets initial state), and set debounce interval.
+    void attach(Adafruit_MCP23017 mcpX, int pin, uint16_t interval_millis);
 
     // Sets the debounce interval
     void interval(uint16_t interval_millis);
@@ -70,6 +71,7 @@ class Bounce
     uint16_t interval_millis;
     uint8_t state;
     uint8_t pin;
+    Adafruit_MCP23017 mcpX;
 };
 
 #endif

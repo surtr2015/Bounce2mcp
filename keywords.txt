@@ -6,7 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-Bounce	 KEYWORD1
+BounceMcp	 KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)

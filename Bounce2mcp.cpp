@@ -5,25 +5,28 @@
 #else
 #include "WProgram.h"
 #endif
-#include "Bounce2.h"
+#include "Bounce2mcp.h"
 
 #define DEBOUNCED_STATE 0
 #define UNSTABLE_STATE  1
 #define STATE_CHANGED   3
 
 
-Bounce::Bounce()
+BounceMcp::BounceMcp()
     : previous_millis(0)
     , interval_millis(10)
     , state(0)
     , pin(0)
 {}
 
-void Bounce::attach(int pin) {
+void BounceMcp::attach(Adafruit_MCP23017 mcpX, int pin, uint16_t interval_millis) {
     this->pin = pin;
-    bool read = digitalRead(pin);
+    this->mcpX = mcpX;
+    this->interval_millis = interval_millis;
+
+    bool read = mcpX.digitalRead(pin);
     state = 0;
-    if (digitalRead(pin)) {
+    if (mcpX.digitalRead(pin)) {
         state = _BV(DEBOUNCED_STATE) | _BV(UNSTABLE_STATE);
     }
 #ifdef BOUNCE_LOCK_OUT
@@ -33,18 +36,18 @@ void Bounce::attach(int pin) {
 #endif
 }
 
-void Bounce::interval(uint16_t interval_millis)
+void BounceMcp::interval(uint16_t interval_millis)
 {
     this->interval_millis = interval_millis;
 }
 
-bool Bounce::update()
+bool BounceMcp::update()
 {
 #ifdef BOUNCE_LOCK_OUT
     state &= ~_BV(STATE_CHANGED);
     // Ignore everything if we are locked out
     if (millis() - previous_millis >= interval_millis) {
-        bool currentState = digitalRead(pin);
+        bool currentState = mcpX.digitalRead(pin);
         if ((bool)(state & _BV(DEBOUNCED_STATE)) != currentState) {
             previous_millis = millis();
             state ^= _BV(DEBOUNCED_STATE);
@@ -54,7 +57,7 @@ bool Bounce::update()
     return state & _BV(STATE_CHANGED);
 #else
     // Read the state of the switch in a temporary variable.
-    bool currentState = digitalRead(pin);
+    bool currentState = mcpX.digitalRead(pin);
     state &= ~_BV(STATE_CHANGED);
 
     // If the reading is different from last reading, reset the debounce counter
@@ -76,17 +79,17 @@ bool Bounce::update()
 #endif
 }
 
-bool Bounce::read()
+bool BounceMcp::read()
 {
     return state & _BV(DEBOUNCED_STATE);
 }
 
-bool Bounce::rose()
+bool BounceMcp::rose()
 {
     return ( state & _BV(DEBOUNCED_STATE) ) && ( state & _BV(STATE_CHANGED));
 }
 
-bool Bounce::fell()
+bool BounceMcp::fell()
 {
     return !( state & _BV(DEBOUNCED_STATE) ) && ( state & _BV(STATE_CHANGED));
 }
