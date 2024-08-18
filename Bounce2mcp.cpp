@@ -19,7 +19,7 @@ BounceMcp::BounceMcp()
     , pin(0)
 {}
 
-void BounceMcp::attach(Adafruit_MCP23017 mcpX, int pin, uint16_t interval_millis) {
+void BounceMcp::attach(MCP23017 mcpX, int pin, uint16_t interval_millis) {
     this->pin = pin;
     this->mcpX = mcpX;
     this->interval_millis = interval_millis;
